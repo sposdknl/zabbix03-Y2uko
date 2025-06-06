@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 # Instalace balicku net-tools
 sudo apt-get install -y net-tools
@@ -14,11 +15,15 @@ sudo apt-get update
 
 # Instalace meta balíčku
 sudo apt-get install -y zabbix-agent2 zabbix-agent2-plugin-*
+# Úprava konfigurace
+sudo sed -i 's/^Server=.*/Server=192.168.1.2/' /etc/zabbix/zabbix_agent2.conf
+sudo sed -i 's/^ServerActive=.*/ServerActive=192.168.1.2/' /etc/zabbix/zabbix_agent2.conf
+sudo sed -i 's/^Hostname=.*/Hostname=$(hostname)/' /etc/zabbix/zabbix_agent2.conf
+echo "HostMetadata=SPOS" | sudo tee -a /etc/zabbix/zabbix_agent2.conf
 
-# Povoleni sluzby zabbix-agent2
+# Spuštění agenta
 sudo systemctl enable zabbix-agent2
-
-# Restart sluzby zabbix-agent2
 sudo systemctl restart zabbix-agent2
 
-# EOF
+
+
